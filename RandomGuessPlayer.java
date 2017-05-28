@@ -106,7 +106,7 @@ public class RandomGuessPlayer implements Player{
     public boolean noRemainingShips() {
         // To be implemented.
         if (hitsTaken == health) {
-            return false;
+            return true;
         }
         // dummy return
         return false;
