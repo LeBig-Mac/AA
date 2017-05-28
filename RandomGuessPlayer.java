@@ -17,6 +17,7 @@ public class RandomGuessPlayer implements Player{
     private ArrayList<Guess> shots = new ArrayList<Guess>();
     private ArrayList<Guess> coords = new ArrayList<Guess>();
     private int hitsTaken = 0;
+    private int health = 0;
 
     @Override
     public void initialisePlayer(World world) {
@@ -41,6 +42,11 @@ public class RandomGuessPlayer implements Player{
             
         }
 
+        while (c<=gameWorld.shipLocations.size()-1){
+            health=health+gameWorld.shipLocations.get(c).coordinates.size();
+            c++;
+        }
+
     } // end of initialisePlayer()
 
     @Override
@@ -54,15 +60,22 @@ public class RandomGuessPlayer implements Player{
                     System.out.println("hit");
 
                     hitsTaken++;
+                    System.out.println("hits taken: " + hitsTaken);
                     return result;
                 }
-                j++;
+                else{
+                    j++;
+
+                }
+                
             }
             j=0;
             i++;
         }
 
-        
+        if (result.isHit == false) {
+            System.out.println("Miss");
+        }
         return result;
     } // end of getAnswer()
 
@@ -76,7 +89,7 @@ public class RandomGuessPlayer implements Player{
         ranGuess.row = coords.get(ranVal).row;
         ranGuess.column = coords.get(ranVal).column;
         
-        //coords.remove(ranVal);
+        coords.remove(ranVal);
         //System.out.println(ranGuess.row);
         //System.out.println(ranGuess.column);
         return ranGuess;
@@ -92,7 +105,7 @@ public class RandomGuessPlayer implements Player{
     @Override
     public boolean noRemainingShips() {
         // To be implemented.
-        if (hitsTaken == 17) {
+        if (hitsTaken == health) {
             return false;
         }
         // dummy return
