@@ -83,6 +83,9 @@ public class GreedyGuessPlayer  implements Player{
         else if(toggle.stalker == true){
             return stalker();
         }
+        else if(toggle.killer == true){
+            return killer();
+        }
         else{
             return null;
         }
@@ -219,35 +222,141 @@ public class GreedyGuessPlayer  implements Player{
     } // end of makeGuess()
 
     public Guess killer() {
+        int canelo, alvarez;
+        int pride = 0;
+        Guess killGuess = new Guess();
+
         
-        return null;
+        
+
+        while(pride == 0){
+            if(counter == 4){
+                if(0 <= (executionShot.column-1) && (executionShot.column-1) < 10){
+                    killGuess.row = executionShot.row;
+                    killGuess.column = executionShot.column-1;
+                    System.out.println(executionShot.column);
+                    executionShot.column = executionShot.column-1;
+                    System.out.println(executionShot.column);
+                    pride = 1;                       
+                }
+                else{ 
+                    pride = 1;                   
+                    break;
+                }
+            }
+            else if(counter == 3){
+                if(0 <= (executionShot.column+1) && (executionShot.column+1) < 10){
+                    killGuess.row = executionShot.row;
+                    killGuess.column = executionShot.column+1;
+                    System.out.println(executionShot.column);
+                    executionShot.column = executionShot.column+1;  
+                    System.out.println(executionShot.column);       
+                    pride = 1;
+                    
+                }
+                else{
+                   
+                    break;
+                }
+            }
+            else if(counter == 2){
+                if(0 <= (executionShot.row-1) && (executionShot.row-1) < 10){
+                    killGuess.row = executionShot.row-1;
+                    killGuess.column = executionShot.column;
+                    System.out.println(executionShot.row);
+                    executionShot.row = executionShot.row-1; 
+                    System.out.println(executionShot.row);
+                    pride = 1;
+                    
+                }
+                else{
+                    
+                    break;
+                }
+            }
+            else{
+                if(0 <= (executionShot.row+1) && (executionShot.row+1) < 10){
+                    killGuess.row = executionShot.row+1;
+                    killGuess.column = executionShot.column;
+                    System.out.println(executionShot.row);
+                    executionShot.row = executionShot.row+1;
+                    System.out.println(executionShot.row);
+                    pride = 1;
+                    
+                }
+                else{
+                    
+                    break;
+                }
+            }
+        }
+        // dummy return
+        return killGuess;
     } // end of makeGuess()
 
     @Override
     public void update(Guess guess, Answer answer) {
         if(answer.isHit == true){
-            if(toggle.hunter == true){
+            if(toggle.hunter == true && toggle.stalker == false){
                 toggle.hunter = false;
                 toggle.stalker = true;
                 woundShot.row = guess.row;
                 woundShot.column = guess.column;
-                uberEats = 1;
             }
-            else if(uberEats == 5){
-                toggle.hunter = true;
+            else if(toggle.stalker == true && toggle.killer == false){
+                executionShot.row = guess.row;
+                executionShot.column = guess.column;
                 toggle.stalker = false;
-                uberEats = 1;
-                button = 0;
+                toggle.killer = true;                
+            }
+            else if(toggle.killer == true){
+                if(answer.shipSunk == null){
+                    toggle.stalker = false;
+                    toggle.killer = true;
+                }
+                else{
+                    toggle.stalker = false;
+                    toggle.killer = false;
+                    toggle.hunter = true;
+                    uberEats = 1;
+                    button = 0;
+                }
+            }
+            else{
+                
             }
         }
         else{
-            if(uberEats == 5){
-                toggle.hunter = true;
-                toggle.stalker = false;
-                uberEats = 1;
-                button = 0;
+            if(toggle.killer == true){
+                if(counter == 4){
+                    executionShot.row = woundShot.row;
+                    executionShot.column = woundShot.column-1;
+                    counter = 3;
+                    
+                }
+                else if(counter == 3){
+                    executionShot.row = woundShot.row;
+                    executionShot.column = woundShot.column+1;
+                    counter = 4;
+                    
+                }
+                else if(counter == 2){
+                    executionShot.row = woundShot.row-1;
+                    executionShot.column = woundShot.column;
+                    counter = 1;
+                    
+                }
+                else if(counter == 1){
+                    executionShot.row = woundShot.row+1;
+                    executionShot.column = woundShot.column;
+                    counter = 2;
+                    
+                }
+                else{
+                    
+                }
             }
-        }
+        } 
         // To be implemented.randomNum
     } // end of update()
 
