@@ -11,9 +11,11 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author Youhan, Jeffrey
  */
 public class GreedyGuessPlayer  implements Player{
-
     public ArrayList<Coordinate> possibleHitPoints = new ArrayList<>();
     public ArrayList<Coordinate> otherHitPoints = new ArrayList<>();
+    public ArrayList<Guess> arrayOfPastHits = new ArrayList<>();
+    private int hitsTaken = 0;
+    private int health = 0;
 
     World newWorld = new World();
 
@@ -64,27 +66,67 @@ public class GreedyGuessPlayer  implements Player{
                     possibleHitPoints.add(holder2);
                 }
             }
-        }          
+        }    
+        c =0;
+        while (c<=newWorld.shipLocations.size()-1){
+            health=health+newWorld.shipLocations.get(c).coordinates.size();
+            c++;
+        }      
     } // end of initialisePlayer()
 
     @Override
     public Answer getAnswer(Guess guess) {
-        return null;
+        
+        Answer result = new Answer();
+        int i =0, j=0;
+        while (i<=newWorld.shipLocations.size()-1){
+            while (j<=newWorld.shipLocations.get(i).coordinates.size()-1) {
+                if (newWorld.shipLocations.get(i).coordinates.get(j).row == guess.row && newWorld.shipLocations.get(i).coordinates.get(j).column == guess.column) {
+                    result.isHit = true;
+                    System.out.println("hit");
+                    newWorld.shipLocations.get(i).healthLeft--;
+                    if (newWorld.shipLocations.get(i).healthLeft<=0) {
+                        result.shipSunk = newWorld.shipLocations.get(i).ship;
+                    }
+                    hitsTaken++;
+                    System.out.println("hits taken: " + hitsTaken);
+                    return result;
+                }
+                else{
+                    j++;
+
+                }
+                
+            }
+            j=0;
+            i++;
+        }
+
+        if (result.isHit == false) {
+            System.out.println("Miss");
+        }
+        return result;
 
     } // end of getAnswer()
 
 
     @Override
     public Guess makeGuess() {
-        
+        Guess guess = new Guess();
         if(toggle.hunter == true){
-            return hunter();
+            guess = hunter();
+            arrayOfPastHits.add(guess);
+            return guess;
         }
         else if(toggle.stalker == true){
-            return stalker();
+            guess = stalker();
+            arrayOfPastHits.add(guess);
+            return guess;   
         }
         else if(toggle.killer == true){
-            return killer();
+            guess = killer();
+            arrayOfPastHits.add(guess);
+            return guess;
         }
         else{
             return null;
@@ -217,8 +259,12 @@ public class GreedyGuessPlayer  implements Player{
         }
          
 
-        // dummy return
-        return stalkGuess;
+        if (arrayOfPastHits.contains(stalkGuess)) {
+            uberEats++;
+        }
+        else{
+        arrayOfPastHits.add(stalkGuess);
+        return stalkGuess;}
     } // end of makeGuess()
 
     public Guess killer() {
@@ -270,7 +316,6 @@ public class GreedyGuessPlayer  implements Player{
                     
                 }
                 else{
-                    
                     break;
                 }
             }
@@ -291,6 +336,7 @@ public class GreedyGuessPlayer  implements Player{
             }
         }
         // dummy return
+        arrayOfPastHits.add(killGuess);
         return killGuess;
     } // end of makeGuess()
 
@@ -363,10 +409,13 @@ public class GreedyGuessPlayer  implements Player{
 
     @Override
     public boolean noRemainingShips() {
-        // To be implemented.
-
+        System.out.println("hits taken: " + hitsTaken);
+        System.out.println("health: " + health);
+        if (hitsTaken == health) {
+            return true;
+        }
         // dummy return
-        return true;
+        return false;
     } // end of noRemainingShips()
 
 } // end of class GreedyGuessPlayer
