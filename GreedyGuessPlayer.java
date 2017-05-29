@@ -244,9 +244,9 @@ public class GreedyGuessPlayer  implements Player{
         stalkHolder.column = stalkGuess.column;
         arrayOfPastHits.add(stalkHolder);
 
-        tyson = arrayOfPastHits.size(); 
+        tyson = possibleHitPoints.size(); 
         
-        for(mike=0; mike<tyson; mike++){
+        for(mike=0; mike<tyson-1; mike++){
             if(possibleHitPoints.get(mike).row == stalkGuess.row && possibleHitPoints.get(mike).column == stalkGuess.column){
                 possibleHitPoints.remove(mike);
             }       
@@ -297,7 +297,7 @@ public class GreedyGuessPlayer  implements Player{
                 if(0 <= (executionShot.column+1) && (executionShot.column+1) < 10){
                     Coordinate holdWound3 = new Coordinate();
                     holdWound3.row = executionShot.row;
-                    holdWound3.column = executionShot.column-1;
+                    holdWound3.column = executionShot.column+1;
 
                     for(tool=0; tool<fool; tool++){
                         if(arrayOfPastHits.get(tool).row == holdWound3.row && arrayOfPastHits.get(tool).column == holdWound3.column){
@@ -383,9 +383,9 @@ public class GreedyGuessPlayer  implements Player{
         killHolder.column = killGuess.column;
         arrayOfPastHits.add(killHolder);
 
-        alvarez = arrayOfPastHits.size(); 
+        alvarez = possibleHitPoints.size(); 
         
-        for(canelo=0; canelo<alvarez; canelo++){
+        for(canelo=0; canelo<alvarez-1; canelo++){
             if(possibleHitPoints.get(canelo).row == killGuess.row && possibleHitPoints.get(canelo).column == killGuess.column){
                 possibleHitPoints.remove(canelo);
             }       
