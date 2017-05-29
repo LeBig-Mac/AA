@@ -99,12 +99,12 @@ public class GreedyGuessPlayer  implements Player{
         int lengthOfArrayHoldingCoords, n;
         lengthOfArrayHoldingCoords = possibleHitPoints.size();
         int randomNum = ThreadLocalRandom.current().nextInt(0, lengthOfArrayHoldingCoords);  
-        System.out.println(randomNum);
         newGuess.row = possibleHitPoints.get(randomNum).row;
         newGuess.column = possibleHitPoints.get(randomNum).column;
         possibleHitPoints.remove(randomNum);
         
-
+        lengthOfArrayHoldingCoords = possibleHitPoints.size();
+        System.out.println("HUNTER");
         System.out.println(lengthOfArrayHoldingCoords);
         System.out.print(newGuess.row + " ");
         System.out.println(newGuess.column);
@@ -179,7 +179,7 @@ public class GreedyGuessPlayer  implements Player{
                 }
                 else{
                     uberEats++;
-                    break;
+                
                 }
             }
             else if(uberEats == 2){
@@ -207,7 +207,7 @@ public class GreedyGuessPlayer  implements Player{
                 }
                 else{
                     uberEats++;
-                    break;
+                    
                 }
             }
             else{
@@ -234,7 +234,7 @@ public class GreedyGuessPlayer  implements Player{
                 }
                 else{
                     uberEats++;
-                    break;
+                    
                 }
             }
         }
@@ -251,13 +251,19 @@ public class GreedyGuessPlayer  implements Player{
                 possibleHitPoints.remove(mike);
             }       
         }
+
+        lengthOfArrayHoldingCoords = possibleHitPoints.size();
+        System.out.println("STALK");
+        System.out.println(lengthOfArrayHoldingCoords);
+        System.out.print(stalkGuess.row + " ");
+        System.out.println(stalkGuess.column);
        
         // dummy return
         return stalkGuess;
     } // end of makeGuess()
 
     public Guess killer() {
-        int canelo, alvarez, trigger, tool, fool;
+        int canelo, alvarez, trigger, tool, fool, lengthOfArrayHoldingCoords;
         int pride = 0;
         Guess killGuess = new Guess();
 
@@ -282,14 +288,14 @@ public class GreedyGuessPlayer  implements Player{
                     if(trigger == 0){
                         killGuess.row = executionShot.row;
                         killGuess.column = executionShot.column-1;
-                        System.out.println(executionShot.column);
+                        
                         executionShot.column = executionShot.column-1;
-                        System.out.println(executionShot.column);
+                        
                         pride = 1;
                     }                          
                 }
                 else{ 
-                    pride = 1;                   
+                    counter = 3;                   
                     break;
                 }
             }
@@ -310,14 +316,14 @@ public class GreedyGuessPlayer  implements Player{
                     if(trigger == 0){
                         killGuess.row = executionShot.row;
                         killGuess.column = executionShot.column+1;
-                        System.out.println(executionShot.column);
+                       
                         executionShot.column = executionShot.column+1;  
-                        System.out.println(executionShot.column);       
+                            
                         pride = 1;
                     }                          
                 }   
                 else{
-                   
+                    counter = 4;
                     break;
                 }
             }
@@ -338,14 +344,14 @@ public class GreedyGuessPlayer  implements Player{
                     if(trigger == 0){
                         killGuess.row = executionShot.row-1;
                         killGuess.column = executionShot.column;
-                        System.out.println(executionShot.row);
+                       
                         executionShot.row = executionShot.row-1; 
-                        System.out.println(executionShot.row);
+                       
                         pride = 1;
                     }                        
                 }
                 else{
-                    
+                    counter = 1;
                     break;
                 }
             }
@@ -366,14 +372,14 @@ public class GreedyGuessPlayer  implements Player{
                     if(trigger == 0){
                         killGuess.row = executionShot.row+1;
                         killGuess.column = executionShot.column;
-                        System.out.println(executionShot.row);
+                       
                         executionShot.row = executionShot.row+1;
-                        System.out.println(executionShot.row);
+                       
                         pride = 1;
                     }                              
                 }
                 else{
-                    
+                    counter = 2;
                     break;
                 }
             }
@@ -390,6 +396,12 @@ public class GreedyGuessPlayer  implements Player{
                 possibleHitPoints.remove(canelo);
             }       
         }
+
+        lengthOfArrayHoldingCoords = possibleHitPoints.size();
+        System.out.println("KILL");
+        System.out.println(lengthOfArrayHoldingCoords);
+        System.out.print(killGuess.row + " ");
+        System.out.println(killGuess.column);
         // dummy return
         return killGuess;
     } // end of makeGuess()
@@ -404,10 +416,18 @@ public class GreedyGuessPlayer  implements Player{
                 woundShot.column = guess.column;
             }
             else if(toggle.stalker == true && toggle.killer == false){
-                executionShot.row = guess.row;
-                executionShot.column = guess.column;
-                toggle.stalker = false;
-                toggle.killer = true;                
+                if(answer.shipSunk == null){
+                    executionShot.row = guess.row;
+                    executionShot.column = guess.column;
+                    toggle.stalker = false;
+                    toggle.killer = true; 
+                }
+                else{
+                    toggle.hunter = true;
+                    toggle.stalker = false;
+                    uberEats = 1;
+                    button = 0;
+                }                     
             }
             else if(toggle.killer == true){
                 if(answer.shipSunk == null){
