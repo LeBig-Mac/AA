@@ -248,6 +248,10 @@ public class GreedyGuessPlayer  implements Player{
                     break;
                 }
             }
+            if (arrayOfPastHits.contains(stalkGuess)) {
+            uberEats++;
+            bottun=0;
+        }
         }
         
         if(pool == 0){
@@ -259,12 +263,10 @@ public class GreedyGuessPlayer  implements Player{
         }
          
 
-        if (arrayOfPastHits.contains(stalkGuess)) {
-            uberEats++;
-        }
-        else{
+        
+        
         arrayOfPastHits.add(stalkGuess);
-        return stalkGuess;}
+        return stalkGuess;
     } // end of makeGuess()
 
     public Guess killer() {
