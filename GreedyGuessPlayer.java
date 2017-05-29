@@ -11,11 +11,10 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author Youhan, Jeffrey
  */
 public class GreedyGuessPlayer  implements Player{
+
     public ArrayList<Coordinate> possibleHitPoints = new ArrayList<>();
     public ArrayList<Coordinate> otherHitPoints = new ArrayList<>();
-    public ArrayList<Guess> arrayOfPastHits = new ArrayList<>();
-    private int hitsTaken = 0;
-    private int health = 0;
+    public ArrayList<Coordinate> arrayOfPastHits = new ArrayList<>();
 
     World newWorld = new World();
 
@@ -66,67 +65,27 @@ public class GreedyGuessPlayer  implements Player{
                     possibleHitPoints.add(holder2);
                 }
             }
-        }    
-        c =0;
-        while (c<=newWorld.shipLocations.size()-1){
-            health=health+newWorld.shipLocations.get(c).coordinates.size();
-            c++;
-        }      
+        }          
     } // end of initialisePlayer()
 
     @Override
     public Answer getAnswer(Guess guess) {
-        
-        Answer result = new Answer();
-        int i =0, j=0;
-        while (i<=newWorld.shipLocations.size()-1){
-            while (j<=newWorld.shipLocations.get(i).coordinates.size()-1) {
-                if (newWorld.shipLocations.get(i).coordinates.get(j).row == guess.row && newWorld.shipLocations.get(i).coordinates.get(j).column == guess.column) {
-                    result.isHit = true;
-                    System.out.println("hit");
-                    newWorld.shipLocations.get(i).healthLeft--;
-                    if (newWorld.shipLocations.get(i).healthLeft<=0) {
-                        result.shipSunk = newWorld.shipLocations.get(i).ship;
-                    }
-                    hitsTaken++;
-                    System.out.println("hits taken: " + hitsTaken);
-                    return result;
-                }
-                else{
-                    j++;
-
-                }
-                
-            }
-            j=0;
-            i++;
-        }
-
-        if (result.isHit == false) {
-            System.out.println("Miss");
-        }
-        return result;
+        return null;
 
     } // end of getAnswer()
 
 
     @Override
     public Guess makeGuess() {
-        Guess guess = new Guess();
+        
         if(toggle.hunter == true){
-            guess = hunter();
-            arrayOfPastHits.add(guess);
-            return guess;
+            return hunter();
         }
         else if(toggle.stalker == true){
-            guess = stalker();
-            arrayOfPastHits.add(guess);
-            return guess;   
+            return stalker();
         }
         else if(toggle.killer == true){
-            guess = killer();
-            arrayOfPastHits.add(guess);
-            return guess;
+            return killer();
         }
         else{
             return null;
@@ -154,8 +113,9 @@ public class GreedyGuessPlayer  implements Player{
     } // end of makeGuess()
 
     public Guess stalker() {
-        int mike, tyson, floyd, mayweather, cool, pool;
+        int mike, tyson, floyd, mayweather, cool, pool, trigger;
         boolean switcher = false;
+        trigger = 0;
         cool = 0;
         pool = 0;
         button = 0;
@@ -166,40 +126,27 @@ public class GreedyGuessPlayer  implements Player{
         exitWound.row = woundShot.row;
         exitWound.column = woundShot.column;
 
-        tyson = otherHitPoints.size(); 
-        
-        for(mike=0; mike<tyson; mike++){
-            if(otherHitPoints.get(mike).row == stalkGuess.row && otherHitPoints.get(mike).column == stalkGuess.column){
-                pool = 1;
-                button = 1;
-                uberEats++;
-            }
-            else{
-                break;
-            }
-        }
-
-        tyson = possibleHitPoints.size();        
-        
-        for(mike=0; mike<tyson; mike++){
-            if(possibleHitPoints.get(mike).row == stalkGuess.row && possibleHitPoints.get(mike).column == stalkGuess.column){
-                System.out.println("one");
-                possibleHitPoints.remove(mike);
-                cool = 1;
-            }
-            else{
-                break;
-            }
-        }
 
         while(button == 0){
             if(uberEats == 4){
+                trigger = 0;
                 if(0 <= (exitWound.column-1) && (exitWound.column-1) < 10){
-                    stalkGuess.row = exitWound.row;
-                    stalkGuess.column = exitWound.column-1;
-                    counter = 4;
-                    uberEats++;
-                    button = 1;                       
+                    Coordinate holdWound4 = new Coordinate();
+                    holdWound4.row = exitWound.row;
+                    holdWound4.column = exitWound.column-1;
+
+                    if(arrayOfPastHits.contains(holdWound4)){
+                        uberEats++;
+                        break;
+                    }
+                    else{
+                        stalkGuess.row = exitWound.row;
+                        stalkGuess.column = exitWound.column-1;
+                        counter = 4;
+                        uberEats++;
+                        button = 1;
+                    }    
+                       
                 }
                 else{ 
                     uberEats++;
@@ -208,13 +155,27 @@ public class GreedyGuessPlayer  implements Player{
                 }
             }
             else if(uberEats == 3){
+                trigger = 0;
                 if(0 <= (exitWound.column+1) && (exitWound.column+1) < 10){
-                    stalkGuess.row = exitWound.row;
-                    stalkGuess.column = exitWound.column+1;
-                    counter = 3;
-                    uberEats++;
-                    button = 1;
-                    
+                    Coordinate holdWound3 = new Coordinate();
+                    holdWound3.row = exitWound.row;
+                    holdWound3.column = exitWound.column+1;
+
+                    for(cool=0; cool<pool; cool++){
+                        if(arrayOfPastHits.get(cool).row == holdWound3.row && arrayOfPastHits.get(cool).column == holdWound3.column){
+                            System.out.println("STALK WORKING 3");
+                            trigger = 1;
+                            uberEats++;
+                            break;
+                        }
+                    } 
+                    if(trigger == 0){
+                        stalkGuess.row = exitWound.row;
+                        stalkGuess.column = exitWound.column+1;
+                        counter = 3;
+                        uberEats++;
+                        button = 1;
+                    }                              
                 }
                 else{
                     uberEats++;
@@ -222,13 +183,27 @@ public class GreedyGuessPlayer  implements Player{
                 }
             }
             else if(uberEats == 2){
+                trigger = 0;
                 if(0 <= (exitWound.row-1) && (exitWound.row-1) < 10){
-                    stalkGuess.row = exitWound.row-1;
-                    stalkGuess.column = exitWound.column;
-                    counter = 2;
-                    uberEats++;
-                    button = 1;
-                    
+                    Coordinate holdWound2 = new Coordinate();
+                    holdWound2.row = exitWound.row-1;
+                    holdWound2.column = exitWound.column;
+
+                    for(cool=0; cool<pool; cool++){
+                        if(arrayOfPastHits.get(cool).row == holdWound2.row && arrayOfPastHits.get(cool).column == holdWound2.column){
+                            System.out.println("STALK WORKING 2");
+                            trigger = 1;
+                            uberEats++;
+                            break;
+                        }
+                    } 
+                    if(trigger == 0){
+                        stalkGuess.row = exitWound.row-1;
+                        stalkGuess.column = exitWound.column;
+                        counter = 2;
+                        uberEats++;
+                        button = 1;
+                    }              
                 }
                 else{
                     uberEats++;
@@ -237,55 +212,81 @@ public class GreedyGuessPlayer  implements Player{
             }
             else{
                 if(0 <= (exitWound.row+1) && (exitWound.row+1) < 10){
-                    stalkGuess.row = exitWound.row+1;
-                    stalkGuess.column = exitWound.column;
-                    counter = 1;
-                    button = 1;
-                    uberEats++;
+                    Coordinate holdWound = new Coordinate();
+                    holdWound.row = exitWound.row+1;
+                    holdWound.column = exitWound.column;
+
+                    for(cool=0; cool<pool; cool++){
+                        if(arrayOfPastHits.get(cool).row == holdWound.row && arrayOfPastHits.get(cool).column == holdWound.column){
+                            System.out.println("STALK WORKING 1");
+                            trigger = 1;
+                            uberEats++;
+                            break;
+                        }
+                    }
+                    if(trigger == 0){
+                        stalkGuess.row = exitWound.row+1;
+                        stalkGuess.column = exitWound.column;
+                        counter = 1;
+                        button = 1;
+                        uberEats++;
+                    }
                 }
                 else{
                     uberEats++;
                     break;
                 }
             }
-            if (arrayOfPastHits.contains(stalkGuess)) {
-            uberEats++;
-            bottun=0;
-        }
         }
         
-        if(pool == 0){
-            System.out.println("two");
-            Coordinate addToShotList = new Coordinate();
-            addToShotList.row = stalkGuess.row;
-            addToShotList.column = stalkGuess.column;
-            otherHitPoints.add(addToShotList);
-        }
-         
+        Coordinate stalkHolder = new Coordinate();
+        stalkHolder.row = stalkGuess.row;
+        stalkHolder.column = stalkGuess.column;
+        arrayOfPastHits.add(stalkHolder);
 
+        tyson = arrayOfPastHits.size(); 
         
-        
-        arrayOfPastHits.add(stalkGuess);
+        for(mike=0; mike<tyson; mike++){
+            if(possibleHitPoints.get(mike).row == stalkGuess.row && possibleHitPoints.get(mike).column == stalkGuess.column){
+                possibleHitPoints.remove(mike);
+            }       
+        }
+       
+        // dummy return
         return stalkGuess;
     } // end of makeGuess()
 
     public Guess killer() {
-        int canelo, alvarez;
+        int canelo, alvarez, trigger, tool, fool;
         int pride = 0;
         Guess killGuess = new Guess();
 
-        
-        
+        trigger = 0;
+        fool = arrayOfPastHits.size();
 
         while(pride == 0){
             if(counter == 4){
                 if(0 <= (executionShot.column-1) && (executionShot.column-1) < 10){
-                    killGuess.row = executionShot.row;
-                    killGuess.column = executionShot.column-1;
-                    System.out.println(executionShot.column);
-                    executionShot.column = executionShot.column-1;
-                    System.out.println(executionShot.column);
-                    pride = 1;                       
+                    Coordinate holdWound4 = new Coordinate();
+                    holdWound4.row = executionShot.row;
+                    holdWound4.column = executionShot.column-1;
+
+                    for(tool=0; tool<fool; tool++){
+                        if(arrayOfPastHits.get(tool).row == holdWound4.row && arrayOfPastHits.get(tool).column == holdWound4.column){
+                            System.out.println("WORKING 1");
+                            trigger = 1;
+                            counter = 3;
+                            break;
+                        }
+                    }
+                    if(trigger == 0){
+                        killGuess.row = executionShot.row;
+                        killGuess.column = executionShot.column-1;
+                        System.out.println(executionShot.column);
+                        executionShot.column = executionShot.column-1;
+                        System.out.println(executionShot.column);
+                        pride = 1;
+                    }                          
                 }
                 else{ 
                     pride = 1;                   
@@ -294,14 +295,27 @@ public class GreedyGuessPlayer  implements Player{
             }
             else if(counter == 3){
                 if(0 <= (executionShot.column+1) && (executionShot.column+1) < 10){
-                    killGuess.row = executionShot.row;
-                    killGuess.column = executionShot.column+1;
-                    System.out.println(executionShot.column);
-                    executionShot.column = executionShot.column+1;  
-                    System.out.println(executionShot.column);       
-                    pride = 1;
-                    
-                }
+                    Coordinate holdWound3 = new Coordinate();
+                    holdWound3.row = executionShot.row;
+                    holdWound3.column = executionShot.column-1;
+
+                    for(tool=0; tool<fool; tool++){
+                        if(arrayOfPastHits.get(tool).row == holdWound3.row && arrayOfPastHits.get(tool).column == holdWound3.column){
+                            System.out.println("WORKING 2");
+                            trigger = 1;
+                            counter = 4;
+                            break;
+                        }
+                    }
+                    if(trigger == 0){
+                        killGuess.row = executionShot.row;
+                        killGuess.column = executionShot.column+1;
+                        System.out.println(executionShot.column);
+                        executionShot.column = executionShot.column+1;  
+                        System.out.println(executionShot.column);       
+                        pride = 1;
+                    }                          
+                }   
                 else{
                    
                     break;
@@ -309,27 +323,54 @@ public class GreedyGuessPlayer  implements Player{
             }
             else if(counter == 2){
                 if(0 <= (executionShot.row-1) && (executionShot.row-1) < 10){
-                    killGuess.row = executionShot.row-1;
-                    killGuess.column = executionShot.column;
-                    System.out.println(executionShot.row);
-                    executionShot.row = executionShot.row-1; 
-                    System.out.println(executionShot.row);
-                    pride = 1;
-                    
+                    Coordinate holdWound2 = new Coordinate();
+                    holdWound2.row = executionShot.row;
+                    holdWound2.column = executionShot.column-1;
+
+                    for(tool=0; tool<fool; tool++){
+                        if(arrayOfPastHits.get(tool).row == holdWound2.row && arrayOfPastHits.get(tool).column == holdWound2.column){
+                            System.out.println("WORKING 3");
+                            trigger = 1;
+                            counter = 1;
+                            break;
+                        }
+                    }
+                    if(trigger == 0){
+                        killGuess.row = executionShot.row-1;
+                        killGuess.column = executionShot.column;
+                        System.out.println(executionShot.row);
+                        executionShot.row = executionShot.row-1; 
+                        System.out.println(executionShot.row);
+                        pride = 1;
+                    }                        
                 }
                 else{
+                    
                     break;
                 }
             }
             else{
                 if(0 <= (executionShot.row+1) && (executionShot.row+1) < 10){
-                    killGuess.row = executionShot.row+1;
-                    killGuess.column = executionShot.column;
-                    System.out.println(executionShot.row);
-                    executionShot.row = executionShot.row+1;
-                    System.out.println(executionShot.row);
-                    pride = 1;
-                    
+                    Coordinate holdWound = new Coordinate();
+                    holdWound.row = executionShot.row;
+                    holdWound.column = executionShot.column-1;
+
+                    for(tool=0; tool<fool; tool++){
+                        if(arrayOfPastHits.get(tool).row == holdWound.row && arrayOfPastHits.get(tool).column == holdWound.column){
+                            System.out.println("WORKING 4");
+                            trigger = 1;
+                            counter = 2;
+                            break;
+                        }
+                    }
+                    if(trigger == 0){
+                        killGuess.row = executionShot.row+1;
+                        killGuess.column = executionShot.column;
+                        System.out.println(executionShot.row);
+                        executionShot.row = executionShot.row+1;
+                        System.out.println(executionShot.row);
+                        pride = 1;
+                    }                              
                 }
                 else{
                     
@@ -337,8 +378,19 @@ public class GreedyGuessPlayer  implements Player{
                 }
             }
         }
+        Coordinate killHolder = new Coordinate();
+        killHolder.row = killGuess.row;
+        killHolder.column = killGuess.column;
+        arrayOfPastHits.add(killHolder);
+
+        alvarez = arrayOfPastHits.size(); 
+        
+        for(canelo=0; canelo<alvarez; canelo++){
+            if(possibleHitPoints.get(canelo).row == killGuess.row && possibleHitPoints.get(canelo).column == killGuess.column){
+                possibleHitPoints.remove(canelo);
+            }       
+        }
         // dummy return
-        arrayOfPastHits.add(killGuess);
         return killGuess;
     } // end of makeGuess()
 
@@ -411,14 +463,10 @@ public class GreedyGuessPlayer  implements Player{
 
     @Override
     public boolean noRemainingShips() {
-        System.out.println("hits taken: " + hitsTaken);
-        System.out.println("health: " + health);
-        if (hitsTaken == health) {
-            return true;
-        }
+        // To be implemented.
+
         // dummy return
-        return false;
+        return true;
     } // end of noRemainingShips()
 
 } // end of class GreedyGuessPlayer
-
